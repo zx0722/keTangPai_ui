@@ -23,7 +23,8 @@ function getCaptcha(obj) {
 // 获取虚拟账号
 function getVirtualId() {
     let id = localStorage.getItem("virtualId");
-    if (id === "null") {
+   
+    if (!id) {
         axios.get('/user/getVirtualId')
             .then((val) => {
                 id = val.data;
@@ -65,8 +66,8 @@ function sendRegisterCaptcha(username, captcha, virtualId) {
 }
 
 //检查账号是否被注册
-function checkAccount(account) {
-    return axios.get('/user/hasUsername', { 'username': account })
+async function checkAccount(account) {
+    return await axios.get('/user/hasUsername', { 'username': account })
 }
 
 // 加课码的重置 停用

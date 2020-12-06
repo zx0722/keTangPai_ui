@@ -190,11 +190,11 @@ export default {
       passwordPopover: false,
       againPassword: "",
       regAccount: {
-        account: "2232878351@qq.com",
-        emailNumber: "2232878351@qq.com",
-        name: "曾新",
-        password: "Zx123456",
-        school: "重庆理工大学",
+        account: "",
+        emailNumber: "",
+        name: "",
+        password: "",
+        school: "",
         captcha:'',
       },
       state: 0, // 模态框分三个状态: 0选择身份 1教师注册 2学生注册
@@ -297,7 +297,7 @@ export default {
           } else {
             this.$message({
               showClose: true,
-              message: "出了这个问题就找软工四班杨能,他写的后端",
+              message: "注册失败",
               type: "info",
             });
           }

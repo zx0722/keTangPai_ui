@@ -134,6 +134,7 @@ export default {
   computed: {},
   watch: {},
   methods: {
+    // 获取短信登录验证码
     getCaptcha() {
       this.$req
         .getCaptcha({
@@ -166,13 +167,13 @@ export default {
 
     login() {
       if (this.state === 0) {
-        if(!this.checkAccount()){
-           this.$message({
-                showClose: true,
-                message: "账号格式错误,请重新输入",
-                type: "error",
-              });
-              return;
+        if (!this.checkAccount()) {
+          this.$message({
+            showClose: true,
+            message: "账号格式错误,请重新输入",
+            type: "error",
+          });
+          return;
         }
         this.$req
           .accountLogin(this.useAccount)
@@ -185,7 +186,6 @@ export default {
                 type: "error",
               });
             } else {
-             
               this.$router.push("homepage");
             }
           })
@@ -220,6 +220,7 @@ export default {
       }
     },
 
+    // 检查账号格式
     checkAccount() {
       let account = this.useAccount.account;
 
@@ -241,16 +242,20 @@ export default {
         return false;
       }
     },
-    
+
+    // 刷新图形验证码
     refresh() {
-   
       this.YZMImg =
-        `${this.$axios.baseURL()}/login/mathCaptcha?virtualId=${this.virtualId}` +
+        `${this.$axios.baseURL()}/login/mathCaptcha?virtualId=${
+          this.virtualId
+        }` +
         "&r=" +
         Math.random();
     },
 
-    confirmPhone() {
+    // 确认电话号码
+    async confirmPhone() {
+      // 判断是否是验证码等待状态
       if (this.countdown != 0) {
         this.$message({
           showClose: true,
@@ -260,16 +265,29 @@ export default {
         return;
       }
 
-      if (!this.$module.isPhone(this.phone)) {
-        this.$message({
-          showClose: true,
-          message: "请输入正确的手机号码",
-          type: "error",
-        });
-      } else {
-        this.YZMDialog = true;
-        this.refresh();
-      }
+      // 判断是否有该电话账号
+      await this.$req.checkAccount(this.phone).then((val) => {
+        if (!val.data) {
+          this.$message({
+            showClose: true,
+            message: "该用户未注册,请先注册",
+            type: "error",
+          });
+          return;
+        } else {
+          // 判断电话号码格式是否正确
+          if (!this.$module.isPhone(this.phone)) {
+            this.$message({
+              showClose: true,
+              message: "请输入正确的手机号码",
+              type: "error",
+            });
+          } else {
+            this.YZMDialog = true;
+            this.refresh();
+          }
+        }
+      });
     },
 
     countdownTime() {
@@ -285,7 +303,6 @@ export default {
   created() {
     this.virtualId = this.$req.getVirtualId();
   },
-  mounted() {},
 };
 </script>
 <style scoped>
