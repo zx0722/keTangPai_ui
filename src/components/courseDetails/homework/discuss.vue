@@ -4,7 +4,9 @@
       <h2 class="title">{{ task.name }}</h2>
       <div class="files">
         <div v-for="f of task.releaseTaskFiles" :key="f.fileId" class="file">
-          <img :src="getIcon(f.filePlan.type)" alt="" />
+          <router-link :to="{path:'/readFile',query:{fileId:f.fileId}}">
+              <img :src="getIcon(f.filePlan.type)" title="预览" class="cursor" alt="" />
+            </router-link>
           <p>{{ f.filePlan.name }}</p>
           <a class="download-a" :href="getDownloadPath(f.fileId)" download=""
             >下载</a

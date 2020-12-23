@@ -202,9 +202,14 @@
 
               <el-table-column
                 label="学号"
-                prop="student.studentId"
+               
                 width="120"
-              />
+              >
+              <template slot-scope="scope">
+                  <p v-if="scope.row.student.studentId">{{ scope.row.student.studentId }}</p>
+                  <p v-else>-----</p>
+                </template>
+              </el-table-column>
 
               <el-table-column label="姓名" width="120">
                 <template slot-scope="scope">
@@ -304,9 +309,15 @@
               style="width: 100%"
               @selection-change="selectionTwoChange"
             >
-              <el-table-column type="selection" width="55"> </el-table-column>
+              <el-table-column type="selection" width="55"/>
 
-              <el-table-column label="学号" prop="studentId" width="120" />
+              <el-table-column label="学号" prop="studentId" width="120" >
+                <template slot-scope="scope">
+                  <p v-if="scope.row.studentId">{{ scope.row.studentId }}</p>
+                  <p v-else>-----</p>
+                </template>
+              </el-table-column>
+
 
               <el-table-column label="姓名" width="120">
                 <template slot-scope="scope">
@@ -586,7 +597,9 @@ export default {
         .updateSubmittedTask(this.task.id, del, this.uploadTask.fileList)
         .then((val) => {
           this.stuTask = val.data;
-          this.uploadTask = {};
+          this.uploadTask = {
+            fileList:[]
+          };
         });
     },
 

@@ -50,7 +50,7 @@ export default {
   components: {},
   data() {
     return {
-      fileId:'',
+      fileId: "",
       isStuRead: false,
 
       calledback: false,
@@ -103,20 +103,20 @@ export default {
       )}`;
     },
     getFileId(i) {
-      if(this.index==-1){
-        return this.fileId
+      if (this.index == -1) {
+        return this.fileId;
       }
       return this.task.submitTaskFiles[i].fileId;
     },
   },
   async created() {
-    if (this.$route.query.fileId) {
-      console.log('学生');
+    if (this.$route.query.userId == this.$store.getAccount) {
       this.isStuRead = true;
-      this.fileId=this.$route.query.fileId
-      this.index=-1
+    }
+    if (this.$route.query.fileId) {
+      this.fileId = this.$route.query.fileId;
+      this.index = -1;
     } else {
-      console.log('老师');
       await this.$req
         .getSubmittedTask(this.$route.query.taskId, this.$route.query.userId)
         .then((val) => {

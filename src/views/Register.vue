@@ -96,7 +96,7 @@
           placeholder="姓名"
         />
         <el-input
-          v-model="regAccount.id"
+          v-model="regAccount.studentId"
           v-if="state === 2"
           class="el-inpit"
           placeholder="学号"

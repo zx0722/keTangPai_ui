@@ -31,7 +31,7 @@
                 >
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item class="el-dropdown-item"
+                <el-dropdown-item v-show="userRole!=1" class="el-dropdown-item"
                   ><p @click="createCourseDialog = true">
                     创建课程
                   </p></el-dropdown-item
@@ -44,6 +44,7 @@
           </li>
           <li>
             <el-button
+            v-show="userRole==2"
               type="primary"
               style="height: 40px"
               @click="quickReleaseDialog = true"
@@ -75,7 +76,7 @@
           :role="'1'"
         />
 
-        <div class="addCourse">
+        <div class="addCourse" v-show="userRole==2">
           <div class="addBg"></div>
           <div class="addfont">
             <i @click="createCourseDialog = true" class="el-icon-plus"></i>
@@ -197,7 +198,10 @@
           >取消</el-button
         >
 
-        <el-button v-show="this.fileCourseObj.role == 0" style="width: 100px" @click="fileCourse('')"
+        <el-button
+          v-show="this.fileCourseObj.role == 0"
+          style="width: 100px"
+          @click="fileCourse('')"
           >归档全部</el-button
         >
         <el-button
@@ -454,7 +458,7 @@ export default {
       createCourse: {
         otherOptions: [],
         semester: 0,
-        name:'',
+        name: "",
       },
 
       optionSemeter: [
@@ -488,34 +492,34 @@ export default {
       transferTeacher: {},
       transferTipsState: 0, //0为常态 1为自己转自己提示 2为账号不存在 3为身份问题 4为合适对象
       dropOutObj: {},
-      userRole:'',
+      userRole: "",  // 1 为学生 2为老师
     };
   },
   computed: {},
   watch: {},
   methods: {
     // 密码验证退课
-    safeDropOut(){
-      this.$req.safeDropOut(this.dropOutObj.id,this.confirmPassword)
-      .then(val=>{
-        if(val.data){
-          this.dropOutDialog=false
-          this.confirmPassword=''
-          this.extractCourse(this.learnCourses,this.dropOutObj.id)
-          this.$message({
-            showClose: true,
-            message: "退课成功",
-            type: "info",
-          });
-          
-        }else{
-          this.$message({
-            showClose: true,
-            message: "退课失败,请确保密码正确并重新输入",
-            type: "error",
-          });
-        }
-      })
+    safeDropOut() {
+      this.$req
+        .safeDropOut(this.dropOutObj.id, this.confirmPassword)
+        .then((val) => {
+          if (val.data) {
+            this.dropOutDialog = false;
+            this.confirmPassword = "";
+            this.extractCourse(this.learnCourses, this.dropOutObj.id);
+            this.$message({
+              showClose: true,
+              message: "退课成功",
+              type: "info",
+            });
+          } else {
+            this.$message({
+              showClose: true,
+              message: "退课失败,请确保密码正确并重新输入",
+              type: "error",
+            });
+          }
+        });
     },
 
     // 加入课程
@@ -557,7 +561,6 @@ export default {
 
     //归档和恢复课程
     fileCourse(type) {
-    
       this.$req
         .fileCourse(type, this.fileCourseObj.id, !this.fileCourseObj.isArchive)
         .then((val) => {
@@ -571,7 +574,7 @@ export default {
             if (this.fileCourseObj.isArchive) {
               // 恢复 将归档数组中删除
               obj = this.extractCourse(this.fileCourses, this.fileCourseObj.id);
-
+              obj.isArchive=false
               if (obj.role == "1") {
                 // 1学 2教
                 this.learnCourses.push(obj);
@@ -591,6 +594,7 @@ export default {
                   this.fileCourseObj.id
                 );
               }
+              obj.isArchive=true
               this.fileCourses.push(obj);
             }
           }
@@ -711,19 +715,18 @@ export default {
               type: "error",
             });
           } else {
-            this.extractCourse(this.teachCourses, this.deleteCourseObj.id);
-            // this.deleteCourseObj = null;
+            this.extractCourse(this.teachCourses, this.deleteCourseObj.id)
 
-            this.teachCourses = null;
             this.deleteCourseDialog = false;
             this.$message({
               showClose: true,
               message: "删除课程成功",
               type: "success",
             });
+            this.confirmPassword = "";
           }
         });
-      this.confirmPassword = "";
+      
     },
 
     //创建课程
@@ -748,6 +751,16 @@ export default {
         .then((val) => {
           this.teachCourses.push(val.data);
           this.createCourseDialog = false;
+          this.createCourse = {
+            otherOptions: [],
+            semester: 0,
+            name: "",
+          };
+          this.$message({
+            showClose:true,
+            type:'success',
+            message:'创建课程成功'
+          })
         })
         .catch((err) => {
           console.log("创建课程", err);
@@ -756,22 +769,23 @@ export default {
 
     // 获取教课程
     getTeachCourses() {
-      this.$req.getCourses("Teach")
-      .then((val) => {
-        this.teachCourses = val.data;
+      this.$req
+        .getCourses("Teach")
+        .then((val) => {
+          this.teachCourses = val.data;
 
-        this.extractCourse(this.teachCourses, "");
-      })
-      .catch(err=>{
-        console.log('学生身份');
-      })
+          this.extractCourse(this.teachCourses, "");
+        })
+        .catch((err) => {
+          console.log("学生身份");
+        });
     },
 
     // 获取学课程
     getLearnCourse() {
       this.$req.getCourses("Learn").then((val) => {
         this.learnCourses = val.data;
-        this.extractCourse(this.learnCourses,'')
+        this.extractCourse(this.learnCourses, "");
       });
     },
 
@@ -799,8 +813,7 @@ export default {
 
       let container = null;
       for (let i = 0; i < sortCourse.length; i++) {
-        sortCourse[i].onclick = function () {
-        };
+        sortCourse[i].onclick = function () {};
 
         sortCourse[i].ondragstart = function () {
           // 当拖动其中一个元素时，this的指向便是你所拖动的元素，将它存在container
@@ -809,11 +822,9 @@ export default {
         // 默认的当你dragover的时候会阻止你做drop的操作，所以需要取消这个默认
         sortCourse[i].ondragover = function () {
           event.preventDefault();
-         
         };
         // 当拖动结束时，给拖动div所在位置下面的div做drop事件，注意drop时this的指向发生改变
         sortCourse[i].ondrop = function () {
-         
           if (container != null && container != this) {
             let temp = document.createElement("div");
             document.body.replaceChild(temp, this);
@@ -824,17 +835,19 @@ export default {
       }
     },
   },
-  created() {
-
-
-    this.getTeachCourses();
-
+  async created() {
+   await this.$req.getMe()
+    .then(val=>{
+      this.userRole=val.data.roles[0].id
+    })
+    if(this.userRole!=1){
+      this.getTeachCourses();
+    }
     this.getLearnCourse();
   },
 };
 </script>
 <style scoped>
-
 .file-tips p {
   text-align: left;
   margin: 10px 0;

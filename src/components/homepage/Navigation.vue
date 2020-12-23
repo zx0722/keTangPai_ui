@@ -85,9 +85,9 @@
                   个人设置
                 </router-link>
               </el-dropdown-item>
-              <el-dropdown-item
+              <el-dropdown-item @click.native="exitAccount"
                 ><div class="icon" style="background-position: 50% 83%" />
-                推出账号</el-dropdown-item
+                退出账号</el-dropdown-item
               >
             </el-dropdown-menu>
           </el-dropdown>
@@ -110,6 +110,15 @@ export default {
   computed: {},
   watch: {},
   methods: {
+    //退出账号
+    exitAccount(){
+      localStorage.removeItem('myToken')
+      localStorage.removeItem('myAccount')
+      this.$router.push({
+        path:'/'
+      })
+    },
+
     intoTask(index){
       this.$router.push({
         path:'/courseTask',
@@ -140,7 +149,6 @@ export default {
   created() {
     this.$req.getUnreadNotice().then((val) => {
       this.noticeList = val.data;
-      console.log(this.noticeList);
     });
   },
   mounted() {},

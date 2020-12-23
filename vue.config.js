@@ -2,7 +2,7 @@ let proxyObj = {}
 proxyObj['/'] = {
     // websocket
     ws: false,
-    target: 'http://172.27.35.1:8046',
+    target: 'http://127.0.0.1:8046',
     changeOrigin: true,
     pathRewrite: {
         '^/': ''

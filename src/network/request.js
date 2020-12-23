@@ -44,11 +44,11 @@ function getVirtualId() {
 function register(obj, role, virtualId) {
     let url = `/${role}/register`
     let data = {}
-
     data.registerUsername = obj.account
     data.captcha = obj.captcha
     data.virtualId = virtualId
     data[role] = {
+        'studentId':obj.studentId,
         'name': obj.name,
         'school': obj.school,
         'accountNumber': '',

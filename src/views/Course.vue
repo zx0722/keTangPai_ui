@@ -161,7 +161,7 @@
       </div>
 
       <div slot="footer" class="createCourseFooter">
-        <el-button style="width: 100px" @click="eidtCourseDialog = false"
+        <el-button style="width: 100px" @click="editCourseDialog = false"
           >取消</el-button
         >
         <el-button

@@ -47,7 +47,10 @@
               :key="f.fileId"
               class="file"
             >
-              <img :src="getIcon(f.filePlan.type)" alt="" />
+            <router-link :to="{path:'/readFile',query:{fileId:f.fileId}}">
+              <img :src="getIcon(f.filePlan.type)" title="预览" class="cursor" alt="" />
+            </router-link>
+              
               <p>{{ f.filePlan.name }}</p>
               <a
                 class="download-a"
@@ -229,9 +232,9 @@ export default {
     homework: {
       require: true,
     },
-    courseId:{
-      require:true,
-    }
+    courseId: {
+      require: true,
+    },
   },
   data() {
     return {
@@ -386,6 +389,10 @@ export default {
 };
 </script>
 <style scoped>
+.cursor {
+  cursor: pointer;
+}
+
 .download-a {
   color: #ffff;
   font-size: 14px;

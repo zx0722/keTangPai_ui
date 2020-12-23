@@ -1,7 +1,7 @@
 import axios from 'axios'
 import qs from 'qs'
 
-axios.defaults.baseURL = "http://172.27.35.1:8046";
+axios.defaults.baseURL = "http://127.0.0.1:8046";
 axios.defaults.timeout = 3000;
 axios.defaults.withCredentials = true;
 
